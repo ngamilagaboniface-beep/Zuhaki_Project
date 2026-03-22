@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | ZUHAKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url("{{ url_for('static', filename='zuhaki_bg.png') }}");
+            background-size: cover; background-position: center;
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-md bg-zinc-900/60 backdrop-blur-2xl border border-zinc-800 p-12 rounded-[3rem] shadow-2xl">
+        <div class="text-center mb-10">
+            <img src="{{ url_for('static', filename='logo512.png') }}" class="h-16 mx-auto mb-6">
+            <h1 class="text-xl font-black uppercase tracking-tighter">Staff Portal</h1>
+        </div>
+        <form action="/login" method="POST" class="space-y-4">
+            <input type="text" name="username" placeholder="Username" required class="w-full bg-black/50 border border-zinc-800 rounded-2xl py-4 px-6 text-sm outline-none focus:border-emerald-500">
+            <input type="password" name="password" placeholder="Password" required class="w-full bg-black/50 border border-zinc-800 rounded-2xl py-4 px-6 text-sm outline-none focus:border-emerald-500">
+            <button class="w-full bg-white text-black font-black py-4 rounded-2xl uppercase text-[10px] tracking-widest hover:bg-emerald-500 transition">Enter Dashboard</button>
+        </form>
+        <div class="mt-8 text-center">
+            <a href="https://wa.me/255XXXXXXXXX?text=I%20need%20a%20Zuhaki%20Password%20Reset" target="_blank" class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest hover:text-emerald-400 transition">Forgot Password?</a>
+        </div>
+    </div>
+</body>
+</html>
