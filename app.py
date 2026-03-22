@@ -7,7 +7,7 @@ import cloudinary
 import cloudinary.uploader
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ZUHAKI_MASTER_2026')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ZUHAKI_DAR_2026')
 
 # Cloudinary Setup
 cloudinary.config(
@@ -25,7 +25,6 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# --- MODELS ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -62,22 +61,15 @@ with app.app_context():
         db.session.add(User(username='admin', password='Zuhaki_Admin_2026'))
         db.session.commit()
 
-# --- ROUTES ---
 @app.route('/')
 def index():
-    search = request.args.get('search')
     loc = request.args.get('location')
     prop_query = Property.query
-    list_query = Listing.query
-
-    if search:
-        prop_query = prop_query.filter(Property.title.contains(search))
-        list_query = list_query.filter(Listing.name.contains(search))
-    if loc:
-        prop_query = prop_query.filter_by(location=loc)
-
+    if loc: prop_query = prop_query.filter_by(location=loc)
+    
+    # Dynamically get unique locations from your database
     locations = [l[0] for l in db.session.query(Property.location).distinct().all() if l[0]]
-    return render_template('index.html', properties=prop_query.all(), listings=list_query.all(), locations=locations)
+    return render_template('index.html', properties=prop_query.all(), locations=locations)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -100,26 +92,20 @@ def admin_dashboard():
 def upload():
     file = request.files['file']
     upload_result = cloudinary.uploader.upload(file)
-    img_url = upload_result['secure_url']
-    if request.form.get('mode') == 'property':
-        item = Property(location=request.form.get('loc'), title=request.form.get('name'), 
-                        price=float(request.form.get('price')), features=request.form.get('desc'), image_url=img_url)
-    else:
-        item = Listing(name=request.form.get('name'), type=request.form.get('type'), 
-                       price=float(request.form.get('price')), image_url=img_url)
-    db.session.add(item)
+    new_item = Property(location=request.form.get('loc'), title=request.form.get('name'), 
+                        price=float(request.form.get('price')), features=request.form.get('desc'), 
+                        image_url=upload_result['secure_url'])
+    db.session.add(new_item)
     db.session.commit()
-    flash('Success!')
     return redirect(url_for('admin_dashboard'))
 
-@app.route('/inquire/<type>/<int:id>', methods=['POST'])
-def inquire(type, id):
-    item = Property.query.get(id) if type == 'prop' else Listing.query.get(id)
-    new_inquiry = Inquiry(client_name=request.form.get('name'), client_phone=request.form.get('phone'),
-                          property_name=getattr(item, 'title', getattr(item, 'name', 'Property')))
-    db.session.add(new_inquiry)
+@app.route('/inquire/<int:id>', methods=['POST'])
+def inquire(id):
+    item = Property.query.get(id)
+    new_inq = Inquiry(client_name=request.form.get('name'), client_phone=request.form.get('phone'), property_name=item.title)
+    db.session.add(new_inq)
     db.session.commit()
-    flash('Our agent will call you shortly!')
+    flash('Tumeshapokea taarifa zako! Tutakupigia hivi punde.')
     return redirect(url_for('index'))
 
 @app.route('/logout')
