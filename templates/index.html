@@ -3,67 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUHAKI Real Estate | Luxury Tanzania</title>
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <title>ZUHAKI Real Estate | Dar es Salaam</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .active-tab { color: #84CBB3; border-bottom: 3px solid #84CBB3; }
-        .hidden { display: none; }
-        #sidebar { transition: transform 0.3s ease-in-out; }
-    </style>
 </head>
 <body class="bg-zinc-950 text-white font-sans">
-
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-zinc-900 z-[100] transform -translate-x-full p-8 border-r border-zinc-800 shadow-2xl">
-        <button onclick="toggleMenu()" class="text-zinc-500 mb-10 text-xs font-bold uppercase tracking-widest hover:text-white">✕ Close Menu</button>
-        <h3 class="text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-6">Explore Regions</h3>
-        <div class="space-y-4 mb-12">
-            <a href="/" class="block text-sm hover:text-emerald-400 transition">Show All</a>
-            {% for loc in locations %}
-            <a href="/?location={{ loc }}" class="block text-sm hover:text-emerald-400 transition">{{ loc }}</a>
-            {% endfor %}
-        </div>
-        <div class="pt-8 border-t border-zinc-800">
-            <a href="/login" class="block w-full bg-zinc-800 py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition">Staff Login</a>
-        </div>
-    </div>
-
-    <header class="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-900">
-        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
-            <button onclick="toggleMenu()" class="bg-zinc-900 p-2 px-5 rounded-full text-[10px] font-black uppercase">Menu</button>
-            <img src="{{ url_for('static', filename='logo512.png') }}" class="h-12 w-auto" alt="ZUHAKI">
-            <form action="/" class="hidden md:block">
-                <input type="text" name="search" placeholder="Search Property..." class="bg-zinc-900 border border-zinc-800 rounded-full py-2 px-6 text-xs outline-none focus:border-emerald-500 w-64">
-            </form>
-        </div>
-        <div class="flex justify-center gap-10 pb-2 text-[10px] font-black uppercase">
-            <button onclick="switchTab('props')" id="btn-prop" class="active-tab pb-2">For Sale</button>
-            <button onclick="switchTab('list')" id="btn-list" class="pb-2">Plots & Stays</button>
+    <header class="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-zinc-900 py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <img src="{{ url_for('static', filename='logo512.png') }}" class="h-12">
+            <div class="text-right hidden md:block">
+                <p class="text-[10px] text-emerald-400 font-bold uppercase">Call Us: 0677404749</p>
+                <p class="text-[9px] text-zinc-500 uppercase">Makabe Road, Mirefu Street</p>
+            </div>
         </div>
     </header>
 
     <main class="container mx-auto px-6 py-12">
         {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <div class="bg-emerald-600/20 border border-emerald-500 text-emerald-400 p-4 rounded-2xl mb-10 text-center font-bold text-sm">
-                {{ messages[0] }}
-            </div>
-          {% endif %}
+            {% if messages %}<div class="bg-emerald-500 text-black p-4 rounded-xl mb-10 text-center font-bold">{{ messages[0] }}</div>{% endif %}
         {% endwith %}
 
-        <div id="view-props" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
             {% for p in properties %}
-            <div class="bg-zinc-900 rounded-[2.5rem] overflow-hidden border border-zinc-800 group hover:border-emerald-500 transition duration-500">
-                <div class="h-64 overflow-hidden"><img src="{{ p.image_url }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700"></div>
+            <div class="bg-zinc-900 rounded-[2rem] overflow-hidden border border-zinc-800">
+                <img src="{{ p.image_url }}" class="h-64 w-full object-cover">
                 <div class="p-8">
-                    <span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full font-bold uppercase">{{ p.location }}</span>
-                    <h3 class="text-2xl font-bold mt-4">{{ p.title }}</h3>
-                    <p class="text-zinc-500 text-xs mt-2 leading-relaxed">{{ p.features }}</p>
-                    <p class="text-3xl font-black mt-6 text-white">{{ "{:,.0f}".format(p.price) }} <span class="text-xs text-zinc-500 uppercase">TZS</span></p>
-                    <form action="/inquire/prop/{{ p.id }}" method="POST" class="mt-8 space-y-3">
-                        <input type="text" name="name" placeholder="Full Name" required class="w-full bg-black border border-zinc-800 p-4 rounded-2xl text-xs outline-none focus:border-emerald-500">
-                        <input type="text" name="phone" placeholder="Phone Number" required class="w-full bg-black border border-zinc-800 p-4 rounded-2xl text-xs outline-none focus:border-emerald-500">
-                        <button class="w-full bg-white text-black font-black py-4 rounded-2xl text-[10px] uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition">Book Viewing</button>
+                    <h3 class="text-2xl font-bold">{{ p.title }}</h3>
+                    <p class="text-emerald-400 font-black text-xl mt-2">{{ "{:,.0f}".format(p.price) }} TZS</p>
+                    <form action="/inquire/{{ p.id }}" method="POST" class="mt-6 space-y-3">
+                        <input type="text" name="phone" placeholder="Your Phone Number" required class="w-full bg-black border border-zinc-800 p-4 rounded-xl text-xs">
+                        <button class="w-full bg-white text-black font-black py-4 rounded-xl uppercase text-xs">Inquire Now</button>
                     </form>
                 </div>
             </div>
@@ -71,15 +39,12 @@
         </div>
     </main>
 
-    <script>
-        function toggleMenu() {
-            const s = document.getElementById('sidebar');
-            s.style.transform = s.style.transform === 'translateX(0px)' ? 'translateX(-100%)' : 'translateX(0px)';
-        }
-        function switchTab(t) {
-            document.getElementById('view-props').classList.toggle('hidden', t !== 'props');
-            document.getElementById('btn-prop').className = t === 'props' ? 'active-tab pb-2' : 'pb-2';
-        }
-    </script>
+    <footer class="bg-black py-12 border-t border-zinc-900 mt-20">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-zinc-500 text-xs uppercase tracking-widest font-bold">ZUHAKI REAL ESTATE COMPANY LIMITED</p>
+            <p class="text-zinc-400 text-[10px] mt-2">Makabe Road, Mirefu Street, Dar es Salaam | 64Q5+X2</p>
+            <p class="text-emerald-500 font-black mt-4">Hotline: 0677404749</p>
+        </div>
+    </footer>
 </body>
 </html>
