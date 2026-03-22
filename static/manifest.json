@@ -1,0 +1,15 @@
+{
+  "name": "Zuhaki Real Estate",
+  "short_name": "Zuhaki",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#84CBB3",
+  "icons": [
+    {
+      "src": "/static/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
