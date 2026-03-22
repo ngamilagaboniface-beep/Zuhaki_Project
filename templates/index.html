@@ -3,132 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUHAKI Real Estate | Makabe Road, Dar es Salaam</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <meta name="theme-color" content="#10b981">
-    
+    <title>ZUHAKI Real Estate</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&display=swap');
-        
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #09090b;
-        }
-
-        .active-tab { 
-            color: #10b981; 
-            border-bottom: 3px solid #10b981; 
-        }
-
+        .active-tab { color: #10b981; border-bottom: 3px solid #10b981; }
+        #sidebar { transition: transform 0.4s ease-in-out; }
         .hidden { display: none; }
-
-        /* Smooth Sidebar Transition */
-        #sidebar { 
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-
-        /* Glassmorphism Effect */
-        .glass-nav {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
     </style>
 </head>
-<body class="text-white selection:bg-emerald-500/30">
+<body class="bg-zinc-950 text-white">
 
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-zinc-900 z-[100] transform -translate-x-full p-10 border-r border-zinc-800 shadow-2xl">
-        <button onclick="toggleMenu()" class="text-zinc-500 mb-12 text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition">
-            ✕ Close Menu
-        </button>
-        
-        <div class="mb-12">
-            <h3 class="text-emerald-500 text-[10px] font-black uppercase tracking-[0.2em] mb-6">Locations</h3>
-            <div class="space-y-4">
-                <a href="/" class="block text-sm font-medium hover:text-emerald-400 transition">All Regions</a>
-                {% for loc in locations %}
-                <a href="/?location={{ loc }}" class="block text-sm font-medium hover:text-emerald-400 transition">{{ loc }}</a>
-                {% endfor %}
-            </div>
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-zinc-900 z-[100] transform -translate-x-full p-8 border-r border-zinc-800">
+        <button onclick="toggleMenu()" class="text-zinc-500 mb-10 font-bold uppercase text-xs">✕ Close</button>
+        <p class="text-emerald-500 text-[10px] font-black uppercase mb-4 tracking-widest">Browse Locations</p>
+        <div class="space-y-4 mb-12">
+            <a href="/" class="block text-sm hover:text-emerald-400">All Locations</a>
+            {% for loc in locations %}
+            <a href="/?location={{ loc }}" class="block text-sm hover:text-emerald-400">{{ loc }}</a>
+            {% endfor %}
         </div>
-
-        <div class="pt-10 border-t border-zinc-800">
-            <p class="text-[10px] text-zinc-500 uppercase font-bold mb-4">Management</p>
-            <a href="/login" class="block w-full bg-zinc-800 py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition">
-                Staff Portal
-            </a>
+        <div class="border-t border-zinc-800 pt-8">
+            <a href="/login" class="block w-full bg-zinc-800 py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600">🔐 Staff Login</a>
         </div>
     </div>
 
-    <header class="sticky top-0 z-50 glass-nav border-b border-zinc-900">
+    <header class="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-900">
         <div class="container mx-auto px-6 py-4 flex items-center justify-between">
-            <button onclick="toggleMenu()" class="bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-6 rounded-full text-[10px] font-black uppercase tracking-widest transition">
-                Menu
-            </button>
-            
-            <a href="/">
-                <img src="{{ url_for('static', filename='logo512.png') }}" class="h-10 md:h-14 w-auto" alt="ZUHAKI">
-            </a>
-
-            <div class="hidden lg:block text-right">
-                <p class="text-[10px] text-emerald-500 font-black uppercase tracking-widest">Call: 0677404749</p>
-                <p class="text-[9px] text-zinc-500 font-medium">Makabe Road, Dar es Salaam</p>
-            </div>
+            <button onclick="toggleMenu()" class="bg-zinc-900 p-2 px-5 rounded-full text-[10px] font-black uppercase">Menu</button>
+            <img src="{{ url_for('static', filename='logo512.png') }}" class="h-12">
+            <a href="/login" class="hidden md:block text-[9px] font-black uppercase tracking-widest text-zinc-500">Admin</a>
         </div>
-
-        <div class="flex justify-center gap-12 pb-2 text-[10px] font-black uppercase tracking-widest">
-            <button onclick="switchTab('props')" id="btn-prop" class="active-tab pb-3 transition-all">Showroom</button>
-            <button onclick="switchTab('list')" id="btn-list" class="pb-3 text-zinc-500 transition-all">Plots & Stays</button>
+        <div class="flex justify-center gap-10 pb-2 text-[10px] font-black uppercase">
+            <button onclick="switchTab('props')" id="btn-prop" class="active-tab pb-2">Properties for Sale</button>
+            <button onclick="switchTab('list')" id="btn-list" class="pb-2">Plots & Stays</button>
         </div>
     </header>
 
     <main class="container mx-auto px-6 py-12">
         {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <div class="max-w-2xl mx-auto bg-emerald-500/10 border border-emerald-500/50 text-emerald-400 p-5 rounded-3xl mb-12 text-center font-bold text-sm">
-                {{ messages[0] }}
-            </div>
-            {% endif %}
+            {% if messages %}<div class="bg-emerald-600/20 text-emerald-400 p-4 rounded-2xl mb-10 text-center font-bold">{{ messages[0] }}</div>{% endif %}
         {% endwith %}
 
         <div id="view-props" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {% if not properties %}
-                <div class="col-span-full py-20 text-center">
-                    <p class="text-zinc-600 font-bold uppercase text-xs tracking-widest">No properties currently listed in this category.</p>
-                </div>
-            {% endif %}
-
             {% for p in properties %}
-            <div class="bg-zinc-900 rounded-[2.5rem] overflow-hidden border border-zinc-800 group hover:border-emerald-500/50 transition-all duration-500">
-                <div class="h-72 overflow-hidden relative">
-                    <img src="{{ p.image_url }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
-                    <div class="absolute top-6 left-6">
-                        <span class="bg-black/60 backdrop-blur-md text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest">
-                            {{ p.location }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="p-10">
-                    <h3 class="text-2xl font-extrabold text-white leading-tight">{{ p.title }}</h3>
-                    <p class="text-zinc-500 text-xs mt-3 leading-relaxed line-clamp-2">{{ p.features }}</p>
-                    
-                    <div class="mt-8 pt-8 border-t border-zinc-800 flex items-end justify-between">
-                        <div>
-                            <p class="text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-1">Asking Price</p>
-                            <p class="text-3xl font-black text-white italic">{{ "{:,.0f}".format(p.price) }}<span class="text-xs ml-1 not-italic text-emerald-500">TZS</span></p>
-                        </div>
-                    </div>
-
-                    <form action="/inquire/{{ p.id }}" method="POST" class="mt-8 space-y-3">
-                        <input type="text" name="name" placeholder="Full Name" required class="w-full bg-black border border-zinc-800 p-4 rounded-2xl text-xs outline-none focus:border-emerald-500 transition">
-                        <input type="text" name="phone" placeholder="Phone Number" required class="w-full bg-black border border-zinc-800 p-4 rounded-2xl text-xs outline-none focus:border-emerald-500 transition">
-                        <button type="submit" class="w-full bg-white text-black font-black py-5 rounded-2xl text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-500 hover:text-white transition-all shadow-xl">
-                            Request Details
-                        </button>
+            <div class="bg-zinc-900 rounded-[2.5rem] overflow-hidden border border-zinc-800 group hover:border-emerald-500 transition duration-500">
+                <img src="{{ p.image_url }}" class="w-full h-64 object-cover">
+                <div class="p-8">
+                    <span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full font-bold uppercase">{{ p.location }}</span>
+                    <h3 class="text-2xl font-bold mt-4">{{ p.title }}</h3>
+                    <p class="text-3xl font-black mt-6">{{ "{:,.0f}".format(p.price) }} TZS</p>
+                    <form action="/inquire/prop/{{ p.id }}" method="POST" class="mt-6 space-y-3">
+                        <input type="text" name="phone" placeholder="Phone Number" required class="w-full bg-black border border-zinc-800 p-4 rounded-xl text-xs outline-none focus:border-emerald-500">
+                        <button class="w-full bg-white text-black font-black py-4 rounded-xl text-[10px] uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition">Inquire Now</button>
                     </form>
                 </div>
             </div>
@@ -136,76 +62,14 @@
         </div>
     </main>
 
-    <footer class="bg-black py-20 border-t border-zinc-900 mt-20">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                
-                <div class="text-center lg:text-left">
-                    <img src="{{ url_for('static', filename='logo512.png') }}" class="h-12 mb-8 mx-auto lg:mx-0">
-                    <h4 class="text-2xl font-black uppercase tracking-tighter">Zuhaki Real Estate Co. Ltd</h4>
-                    <p class="text-zinc-500 mt-4 leading-relaxed max-w-md mx-auto lg:mx-0">
-                        Premium property management and land sales in Dar es Salaam. Visit our office at Makabe Road, Mirefu Street.
-                    </p>
-                    
-                    <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <a href="tel:+255677404749" class="bg-zinc-900 border border-zinc-800 px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition">
-                            📞 0677404749
-                        </a>
-                        <a href="https://wa.me/255677404749" class="bg-emerald-600 text-black px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-white transition">
-                            💬 WhatsApp Agent
-                        </a>
-                    </div>
-                </div>
-
-                <div class="bg-zinc-900/40 p-10 rounded-[3rem] border border-zinc-800 text-center">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                    <h5 class="text-sm font-black uppercase tracking-widest">Office Location</h5>
-                    <p class="text-[11px] text-zinc-500 mt-2 uppercase font-bold">Plus Code: 64Q5+X2 Dar es Salaam</p>
-                    <p class="text-xs text-zinc-600 mt-1">Makabe Road, Mirefu Street</p>
-                    
-                    <a href="https://www.google.com/maps/search/?api=1&query=64Q5%2BX2+Dar+es+Salaam" 
-                       target="_blank" 
-                       class="mt-8 inline-block bg-white text-black text-[10px] font-black uppercase px-10 py-4 rounded-full hover:bg-emerald-500 hover:text-white transition shadow-2xl">
-                        Open GPS Navigation
-                    </a>
-                </div>
-            </div>
-
-            <div class="mt-20 pt-10 border-t border-zinc-900 text-center">
-                <p class="text-[9px] text-zinc-700 uppercase tracking-[0.3em]">
-                    © 2026 ZUHAKI REAL ESTATE COMPANY LIMITED. REG: 64Q5+X2.
-                </p>
-            </div>
-        </div>
-    </footer>
-
     <script>
         function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const isOpen = sidebar.style.transform === 'translateX(0px)';
-            sidebar.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0px)';
+            const s = document.getElementById('sidebar');
+            s.style.transform = s.style.transform === 'translateX(0px)' ? 'translateX(-100%)' : 'translateX(0px)';
         }
-
-        function switchTab(tab) {
-            const viewProps = document.getElementById('view-props');
-            const btnProp = document.getElementById('btn-prop');
-            const btnList = document.getElementById('btn-list');
-
-            if (tab === 'props') {
-                viewProps.classList.remove('hidden');
-                btnProp.classList.add('active-tab');
-                btnProp.classList.remove('text-zinc-500');
-                btnList.classList.remove('active-tab');
-                btnList.classList.add('text-zinc-500');
-            } else {
-                // For now we keep it simple, you can add a separate list query later
-                alert("Plots & Stays listings coming soon!");
-            }
+        function switchTab(t) {
+            document.getElementById('view-props').classList.toggle('hidden', t !== 'props');
+            document.getElementById('btn-prop').className = t === 'props' ? 'active-tab pb-2' : 'pb-2';
         }
     </script>
 </body>
