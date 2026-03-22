@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ZUHAKI ADMIN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-zinc-950 text-white p-8 md:p-16">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-16">
+            <img src="{{ url_for('static', filename='logo512.png') }}" class="h-10">
+            <div class="flex gap-4">
+                <a href="/" class="text-[10px] font-bold uppercase py-3 px-6 border border-zinc-800 rounded-xl hover:bg-zinc-800">Live Site</a>
+                <a href="/logout" class="text-[10px] font-bold uppercase py-3 px-6 bg-red-600 rounded-xl">Logout</a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div class="lg:col-span-2 space-y-12">
+                <div class="bg-zinc-900 p-10 rounded-[2.5rem] border border-zinc-800">
+                    <h2 class="text-emerald-400 font-black uppercase tracking-widest text-xs mb-8">Create New Listing</h2>
+                    <form action="/upload" method="POST" enctype="multipart/form-data" class="space-y-5">
+                        <select name="mode" class="w-full bg-black p-4 rounded-2xl border border-zinc-800 text-sm">
+                            <option value="property">Sale Property</option>
+                            <option value="listing">Rental / Plot</option>
+                        </select>
+                        <input type="text" name="name" placeholder="Title" required class="w-full bg-black p-4 rounded-2xl border border-zinc-800 text-sm">
+                        <input type="text" name="loc" placeholder="Location" class="w-full bg-black p-4 rounded-2xl border border-zinc-800 text-sm">
+                        <input type="number" name="price" placeholder="Price (TZS)" required class="w-full bg-black p-4 rounded-2xl border border-zinc-800 text-sm">
+                        <textarea name="desc" placeholder="Details (Beds, Baths, Amenities)" class="w-full bg-black p-4 rounded-2xl border border-zinc-800 text-sm h-32"></textarea>
+                        <input type="file" name="file" required class="w-full bg-black p-4 rounded-2xl border border-zinc-800 text-xs text-zinc-500">
+                        <button class="w-full bg-emerald-600 py-5 rounded-2xl font-black uppercase text-xs tracking-widest">Publish Listing</button>
+                    </form>
+                </div>
+
+                <div class="bg-zinc-900 p-10 rounded-[2.5rem] border border-zinc-800">
+                    <h2 class="text-zinc-500 font-black uppercase tracking-widest text-xs mb-8">Client Inquiries</h2>
+                    {% for i in inquiries %}
+                    <div class="bg-black p-6 rounded-2xl border border-zinc-800 mb-4 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-lg text-white">{{ i.client_name }}</p>
+                            <p class="text-emerald-400 font-black text-sm">{{ i.client_phone }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-zinc-500 uppercase font-bold">{{ i.property_name }}</p>
+                            <p class="text-[9px] text-zinc-700 mt-1">{{ i.date_created.strftime('%Y-%m-%d') }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 p-10 rounded-[2.5rem] border border-zinc-800 h-fit">
+                <h2 class="text-red-500 font-black uppercase tracking-widest text-[10px] mb-6">Security Update</h2>
+                <form action="/change_password" method="POST" class="space-y-4">
+                    <input type="password" name="new_password" placeholder="New Password" required class="w-full bg-black p-4 rounded-2xl border border-zinc-800 text-sm">
+                    <button class="w-full bg-white text-black py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-red-600 hover:text-white transition">Update Admin Pass</button>
+                </form>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}<p class="text-emerald-500 text-[10px] mt-4 italic text-center">{{ messages[0] }}</p>{% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
