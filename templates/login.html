@@ -5,18 +5,23 @@
     <title>Login | ZUHAKI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url("{{ url_for('static', filename='zuhaki_bg.png') }}"); background-size: cover; }
+        body {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url("{{ url_for('static', filename='zuhaki_bg.png') }}");
+            background-size: cover; background-position: center;
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6 text-white">
-    <div class="w-full max-w-md bg-zinc-900/80 backdrop-blur-xl p-10 rounded-[2.5rem] border border-zinc-800 text-center">
-        <img src="{{ url_for('static', filename='logo512.png') }}" class="h-16 mx-auto mb-6">
+<body class="text-white min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-md bg-zinc-900/60 backdrop-blur-2xl border border-zinc-800 p-12 rounded-[3rem]">
+        <div class="text-center mb-10">
+            <img src="{{ url_for('static', filename='logo512.png') }}" class="h-16 mx-auto mb-6">
+            <h1 class="text-xl font-black uppercase tracking-tighter">Staff Portal</h1>
+        </div>
         <form action="/login" method="POST" class="space-y-4">
-            <input type="text" name="username" placeholder="Username" required class="w-full bg-black border border-zinc-800 p-4 rounded-xl">
-            <input type="password" name="password" placeholder="Password" required class="w-full bg-black border border-zinc-800 p-4 rounded-xl">
-            <button class="w-full bg-emerald-500 text-black font-black py-4 rounded-xl uppercase">Login</button>
+            <input type="text" name="username" placeholder="Username" required class="w-full bg-black/50 border border-zinc-800 rounded-2xl py-4 px-6 text-sm outline-none focus:border-emerald-500">
+            <input type="password" name="password" placeholder="Password" required class="w-full bg-black/50 border border-zinc-800 rounded-2xl py-4 px-6 text-sm outline-none focus:border-emerald-500">
+            <button class="w-full bg-white text-black font-black py-4 rounded-2xl uppercase text-[10px] tracking-widest hover:bg-emerald-500 transition">Enter Dashboard</button>
         </form>
-        <a href="https://wa.me/255677404749?text=Zuhaki%20Admin%20Reset%20Request" class="block mt-8 text-[10px] text-zinc-500 uppercase font-bold hover:text-emerald-400">Forgot Password? Contact Support</a>
     </div>
 </body>
 </html>
