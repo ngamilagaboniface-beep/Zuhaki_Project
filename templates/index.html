@@ -1,60 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sw">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUHAKI Real Estate</title>
+    <title>ZUHAKI REAL ESTATE | Makabe Road, Dar es Salaam</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .active-tab { color: #10b981; border-bottom: 3px solid #10b981; }
         #sidebar { transition: transform 0.4s ease-in-out; }
-        .hidden { display: none; }
+        .active-tab { color: #10b981; border-bottom: 2px solid #10b981; }
     </style>
 </head>
-<body class="bg-zinc-950 text-white">
+<body class="bg-zinc-950 text-white font-sans">
 
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-zinc-900 z-[100] transform -translate-x-full p-8 border-r border-zinc-800">
-        <button onclick="toggleMenu()" class="text-zinc-500 mb-10 font-bold uppercase text-xs">✕ Close</button>
-        <p class="text-emerald-500 text-[10px] font-black uppercase mb-4 tracking-widest">Browse Locations</p>
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-zinc-900 z-[100] transform -translate-x-full p-8 border-r border-zinc-800 shadow-2xl">
+        <button onclick="toggleMenu()" class="text-zinc-500 mb-10 font-bold uppercase text-[10px] tracking-widest">✕ Funga Menu</button>
+        
+        <div class="mb-10">
+            <p class="text-emerald-500 text-[10px] font-black uppercase mb-4 tracking-widest">Ofisi Yetu</p>
+            <p class="text-xs text-zinc-400">Makabe Road, Mirefu Street</p>
+            <p class="text-xs text-zinc-400">Dar es Salaam, Tanzania</p>
+            <p class="text-xs font-bold text-white mt-2">0677404749</p>
+        </div>
+
+        <p class="text-emerald-500 text-[10px] font-black uppercase mb-4 tracking-widest">Maeneo Yetu</p>
         <div class="space-y-4 mb-12">
-            <a href="/" class="block text-sm hover:text-emerald-400">All Locations</a>
+            <a href="/" class="block text-sm hover:text-emerald-400">Tanzania Yote</a>
             {% for loc in locations %}
             <a href="/?location={{ loc }}" class="block text-sm hover:text-emerald-400">{{ loc }}</a>
             {% endfor %}
         </div>
+        
         <div class="border-t border-zinc-800 pt-8">
-            <a href="/login" class="block w-full bg-zinc-800 py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600">🔐 Staff Login</a>
+            <a href="/login" class="block w-full bg-zinc-800 py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition">🔐 Staff Portal</a>
         </div>
     </div>
 
     <header class="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-900">
         <div class="container mx-auto px-6 py-4 flex items-center justify-between">
             <button onclick="toggleMenu()" class="bg-zinc-900 p-2 px-5 rounded-full text-[10px] font-black uppercase">Menu</button>
-            <img src="{{ url_for('static', filename='logo512.png') }}" class="h-12">
-            <a href="/login" class="hidden md:block text-[9px] font-black uppercase tracking-widest text-zinc-500">Admin</a>
-        </div>
-        <div class="flex justify-center gap-10 pb-2 text-[10px] font-black uppercase">
-            <button onclick="switchTab('props')" id="btn-prop" class="active-tab pb-2">Properties for Sale</button>
-            <button onclick="switchTab('list')" id="btn-list" class="pb-2">Plots & Stays</button>
+            <a href="/"><img src="{{ url_for('static', filename='logo512.png') }}" class="h-10 md:h-14"></a>
+            <a href="https://wa.me/255677404749" class="bg-emerald-600 px-4 py-2 rounded-full text-[10px] font-black uppercase shadow-lg shadow-emerald-600/20">WhatsApp Us</a>
         </div>
     </header>
 
-    <main class="container mx-auto px-6 py-12">
+    <div class="relative h-72 overflow-hidden mb-12">
+        <img src="{{ url_for('static', filename='zuhaki_bg.png') }}" class="w-full h-full object-cover brightness-50">
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+            <h1 class="text-3xl md:text-5xl font-black uppercase tracking-tighter">ZUHAKI REAL ESTATE</h1>
+            <p class="text-emerald-400 text-xs font-bold uppercase tracking-widest mt-2">Makabe Road, Mirefu Street | Dar es Salaam</p>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-6 py-4">
         {% with messages = get_flashed_messages() %}
-            {% if messages %}<div class="bg-emerald-600/20 text-emerald-400 p-4 rounded-2xl mb-10 text-center font-bold">{{ messages[0] }}</div>{% endif %}
+            {% if messages %}<div class="bg-emerald-500/10 text-emerald-400 p-4 rounded-2xl mb-10 text-center text-sm font-bold border border-emerald-500/30">{{ messages[0] }}</div>{% endif %}
         {% endwith %}
 
-        <div id="view-props" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {% for p in properties %}
-            <div class="bg-zinc-900 rounded-[2.5rem] overflow-hidden border border-zinc-800 group hover:border-emerald-500 transition duration-500">
-                <img src="{{ p.image_url }}" class="w-full h-64 object-cover">
+            <div class="bg-zinc-900 rounded-[2.5rem] overflow-hidden border border-zinc-800 group hover:border-emerald-500 transition duration-500 shadow-xl">
+                <img src="{{ p.image_url }}" class="w-full h-64 object-cover group-hover:scale-105 transition duration-700">
                 <div class="p-8">
-                    <span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full font-bold uppercase">{{ p.location }}</span>
-                    <h3 class="text-2xl font-bold mt-4">{{ p.title }}</h3>
-                    <p class="text-3xl font-black mt-6">{{ "{:,.0f}".format(p.price) }} TZS</p>
-                    <form action="/inquire/prop/{{ p.id }}" method="POST" class="mt-6 space-y-3">
-                        <input type="text" name="phone" placeholder="Phone Number" required class="w-full bg-black border border-zinc-800 p-4 rounded-xl text-xs outline-none focus:border-emerald-500">
-                        <button class="w-full bg-white text-black font-black py-4 rounded-xl text-[10px] uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition">Inquire Now</button>
+                    <span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full font-bold uppercase tracking-widest">{{ p.location }}</span>
+                    <h3 class="text-2xl font-black mt-4 tracking-tight">{{ p.title }}</h3>
+                    <p class="text-zinc-500 text-xs mt-3 leading-relaxed line-clamp-2">{{ p.features }}</p>
+                    <p class="text-3xl font-black mt-6 text-white">{{ "{:,.0f}".format(p.price) }} <span class="text-[10px] text-zinc-500 uppercase">TZS</span></p>
+                    
+                    <form action="/inquire/{{ p.id }}" method="POST" class="mt-8 space-y-3">
+                        <input type="text" name="phone" placeholder="Namba yako ya Simu" required class="w-full bg-black border border-zinc-800 p-4 rounded-2xl text-xs outline-none focus:border-emerald-500">
+                        <button class="w-full bg-white text-black font-black py-4 rounded-2xl text-[10px] uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition">Nihitaji Maelezo</button>
                     </form>
                 </div>
             </div>
@@ -62,14 +76,22 @@
         </div>
     </main>
 
+    <footer class="mt-24 p-12 border-t border-zinc-900 bg-zinc-950">
+        <div class="container mx-auto text-center">
+            <img src="{{ url_for('static', filename='logo512.png') }}" class="h-10 mx-auto mb-6 opacity-50">
+            <p class="text-[10px] font-black uppercase tracking-widest text-zinc-400">&copy; 2026 ZUHAKI REAL ESTATE COMPANY LIMITED</p>
+            <div class="mt-4 flex flex-col md:flex-row justify-center gap-4 text-zinc-600 text-[10px] font-bold uppercase">
+                <span>📍 Makabe Road, Mirefu Street, Dar es Salaam</span>
+                <span>📞 0677404749</span>
+                <span>🌍 Plus Code: 64Q5+X2</span>
+            </div>
+        </div>
+    </footer>
+
     <script>
         function toggleMenu() {
             const s = document.getElementById('sidebar');
             s.style.transform = s.style.transform === 'translateX(0px)' ? 'translateX(-100%)' : 'translateX(0px)';
-        }
-        function switchTab(t) {
-            document.getElementById('view-props').classList.toggle('hidden', t !== 'props');
-            document.getElementById('btn-prop').className = t === 'props' ? 'active-tab pb-2' : 'pb-2';
         }
     </script>
 </body>
