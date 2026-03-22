@@ -7,7 +7,7 @@ import cloudinary
 import cloudinary.uploader
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ZUHAKI_SECURE_2026')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ZUHAKI_MASTER_2026')
 
 # Cloudinary Setup
 cloudinary.config(
@@ -39,6 +39,13 @@ class Property(db.Model):
     features = db.Column(db.Text)
     image_url = db.Column(db.String(500))
 
+class Listing(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    type = db.Column(db.String(50)) 
+    price = db.Column(db.Float)
+    image_url = db.Column(db.String(500))
+
 class Inquiry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_name = db.Column(db.String(100))
@@ -55,26 +62,22 @@ with app.app_context():
         db.session.add(User(username='admin', password='Zuhaki_Admin_2026'))
         db.session.commit()
 
+# --- ROUTES ---
 @app.route('/')
 def index():
+    search = request.args.get('search')
     loc = request.args.get('location')
     prop_query = Property.query
-    if loc: prop_query = prop_query.filter_by(location=loc)
-    locations = [l[0] for l in db.session.query(Property.location).distinct().all() if l[0]]
-    return render_template('index.html', properties=prop_query.all(), locations=locations)
+    list_query = Listing.query
 
-@app.route('/inquire/<int:id>', methods=['POST'])
-def inquire(id):
-    item = Property.query.get(id)
-    new_inquiry = Inquiry(
-        client_name=request.form.get('name'),
-        client_phone=request.form.get('phone'),
-        property_name=item.title if item else "General Inquiry"
-    )
-    db.session.add(new_inquiry)
-    db.session.commit()
-    flash('Inquiry Sent! We will contact you shortly.')
-    return redirect(url_for('index'))
+    if search:
+        prop_query = prop_query.filter(Property.title.contains(search))
+        list_query = list_query.filter(Listing.name.contains(search))
+    if loc:
+        prop_query = prop_query.filter_by(location=loc)
+
+    locations = [l[0] for l in db.session.query(Property.location).distinct().all() if l[0]]
+    return render_template('index.html', properties=prop_query.all(), listings=list_query.all(), locations=locations)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -83,24 +86,41 @@ def login():
         if user and user.password == request.form.get('password'):
             login_user(user)
             return redirect(url_for('admin_dashboard'))
+        flash('Invalid Credentials')
     return render_template('login.html')
 
 @app.route('/admin')
 @login_required
 def admin_dashboard():
-    return render_template('admin.html', inquiries=Inquiry.query.order_by(Inquiry.date_created.desc()).all())
+    inquiries = Inquiry.query.order_by(Inquiry.date_created.desc()).all()
+    return render_template('admin.html', inquiries=inquiries)
 
 @app.route('/upload', methods=['POST'])
 @login_required
 def upload():
     file = request.files['file']
     upload_result = cloudinary.uploader.upload(file)
-    item = Property(location=request.form.get('loc'), title=request.form.get('name'), 
-                    price=float(request.form.get('price')), features=request.form.get('desc'), 
-                    image_url=upload_result['secure_url'])
+    img_url = upload_result['secure_url']
+    if request.form.get('mode') == 'property':
+        item = Property(location=request.form.get('loc'), title=request.form.get('name'), 
+                        price=float(request.form.get('price')), features=request.form.get('desc'), image_url=img_url)
+    else:
+        item = Listing(name=request.form.get('name'), type=request.form.get('type'), 
+                       price=float(request.form.get('price')), image_url=img_url)
     db.session.add(item)
     db.session.commit()
+    flash('Success!')
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/inquire/<type>/<int:id>', methods=['POST'])
+def inquire(type, id):
+    item = Property.query.get(id) if type == 'prop' else Listing.query.get(id)
+    new_inquiry = Inquiry(client_name=request.form.get('name'), client_phone=request.form.get('phone'),
+                          property_name=getattr(item, 'title', getattr(item, 'name', 'Property')))
+    db.session.add(new_inquiry)
+    db.session.commit()
+    flash('Our agent will call you shortly!')
+    return redirect(url_for('index'))
 
 @app.route('/logout')
 def logout():
