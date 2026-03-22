@@ -7,7 +7,7 @@ import cloudinary
 import cloudinary.uploader
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ZUHAKI_DAR_2026')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ZUHAKI_MAKABE_2026')
 
 # Cloudinary Setup
 cloudinary.config(
@@ -38,13 +38,6 @@ class Property(db.Model):
     features = db.Column(db.Text)
     image_url = db.Column(db.String(500))
 
-class Listing(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    type = db.Column(db.String(50)) 
-    price = db.Column(db.Float)
-    image_url = db.Column(db.String(500))
-
 class Inquiry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_name = db.Column(db.String(100))
@@ -66,8 +59,6 @@ def index():
     loc = request.args.get('location')
     prop_query = Property.query
     if loc: prop_query = prop_query.filter_by(location=loc)
-    
-    # Dynamically get unique locations from your database
     locations = [l[0] for l in db.session.query(Property.location).distinct().all() if l[0]]
     return render_template('index.html', properties=prop_query.all(), locations=locations)
 
@@ -78,7 +69,7 @@ def login():
         if user and user.password == request.form.get('password'):
             login_user(user)
             return redirect(url_for('admin_dashboard'))
-        flash('Invalid Credentials')
+        flash('Namba au Nywila sio sahihi')
     return render_template('login.html')
 
 @app.route('/admin')
@@ -102,10 +93,10 @@ def upload():
 @app.route('/inquire/<int:id>', methods=['POST'])
 def inquire(id):
     item = Property.query.get(id)
-    new_inq = Inquiry(client_name=request.form.get('name'), client_phone=request.form.get('phone'), property_name=item.title)
+    new_inq = Inquiry(client_name=request.form.get('name', 'Mteja'), client_phone=request.form.get('phone'), property_name=item.title)
     db.session.add(new_inq)
     db.session.commit()
-    flash('Tumeshapokea taarifa zako! Tutakupigia hivi punde.')
+    flash('Tumeshapokea taarifa zako! Tutakupigia hivi punde kupitia ' + request.form.get('phone'))
     return redirect(url_for('index'))
 
 @app.route('/logout')
